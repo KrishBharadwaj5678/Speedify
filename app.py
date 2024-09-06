@@ -1,5 +1,5 @@
 import streamlit as st
-import subprocess
+import speedtest
 
 # Set the page configuration
 st.set_page_config(
@@ -18,23 +18,17 @@ btn = st.button("Test Speed")
 
 if btn:
     try:
-        # Run the speed test and capture the output
-        result = subprocess.run(["speedtest-cli", "--share"], capture_output=True, text=True)
-        output = result.stdout
-        error = result.stderr
+        # Create a Speedtest object and run the test
+        st.write("Running speed test. Please wait...")
+        speed_test = speedtest.Speedtest()
+        speed_test.get_best_server()
+        download_speed = speed_test.download() / 1_000_000  # Convert to Mbps
+        upload_speed = speed_test.upload() / 1_000_000  # Convert to Mbps
+        ping = speed_test.results.ping
 
-        # Debugging: Print stdout and stderr
-        st.write("Debug - Command Output:", output)
-        st.write("Debug - Command Error:", error)
-
-        # Check if "results:" is in the output to prevent IndexError
-        if "results:" in output:
-            link = output.split("results:")[1].strip()
-            st.image(link)
-        else:
-            st.error("Could not retrieve speed test results. Please try again.")
-
-    except FileNotFoundError:
-        st.error("Speedtest CLI tool is not installed. Please install it using `pip install speedtest-cli`.")
+        # Display the results
+        st.write(f"**Download Speed:** {download_speed:.2f} Mbps")
+        st.write(f"**Upload Speed:** {upload_speed:.2f} Mbps")
+        st.write(f"**Ping:** {ping:.2f} ms")
     except Exception as e:
         st.error(f"An error occurred: {e}")
