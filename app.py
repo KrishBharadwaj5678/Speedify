@@ -21,6 +21,11 @@ if btn:
         # Run the speed test and capture the output
         result = subprocess.run(["speedtest-cli", "--share"], capture_output=True, text=True)
         output = result.stdout
+        error = result.stderr
+
+        # Debugging: Print stdout and stderr
+        st.write("Debug - Command Output:", output)
+        st.write("Debug - Command Error:", error)
 
         # Check if "results:" is in the output to prevent IndexError
         if "results:" in output:
