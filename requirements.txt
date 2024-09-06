@@ -1,2 +1,2 @@
 streamlit
-speedtest
+speedtest-cli
